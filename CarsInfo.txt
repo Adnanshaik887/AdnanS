@@ -1,0 +1,118 @@
+import java.util.*;
+
+ public class CarsInfo {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter the Car Details");
+
+        String carDetails = scanner.nextLine().trim();
+
+        CarInfo carInfo = UserInterface.extractDetails(carDetails);
+
+        if (carInfo != null) {
+            System.out.println("Car Id : " + carInfo.getCarId());
+            System.out.println("Car Name : " + carInfo.getCarName());
+            System.out.println("Car Type : " + carInfo.getCarType());
+            System.out.println("City : " + carInfo.getCity());
+
+            String result = carInfo.checkAvailability();
+            if (result.equals("Not Available")) {
+                System.out.println("Invalid Details");
+            } else {
+                System.out.println("Available car and price is: " + result);
+            }
+        } else {
+            System.out.println("Invalid Details");
+        }
+
+        scanner.close();
+    }
+}
+
+class CarInfo {
+    private String carId;
+    private String carName;
+    private String carType;
+    private String city;
+
+    public CarInfo(String carId, String carName, String carType, String city) {
+        this.carId = carId;
+        this.carName = carName;
+        this.carType = carType;
+        this.city = city;
+    }
+
+    public String getCarId() {
+        return carId;
+    }
+
+    public String getCarName() {
+        return carName;
+    }
+
+    public String getCarType() {
+        return carType;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String checkAvailability() {
+        String carNameLower = carName.toLowerCase();
+        String carTypeLower = carType.toLowerCase();
+        String cityLower = city.toLowerCase();
+
+        List<String> validCarNames = Arrays.asList("nissan", "ford");
+        List<String> validCities = Arrays.asList("new york", "denver", "los angeles");
+        List<String> validCarTypes = Arrays.asList("sedan", "suv", "muv");
+
+        if (!validCarNames.contains(carNameLower)) {
+            return "Not Available";
+        }
+        if (!validCities.contains(cityLower)) {
+            return "Not Available";
+        }
+        if (!validCarTypes.contains(carTypeLower)) {
+            return "Not Available";
+        }
+
+        Map<String, Map<String, String[]>> carData = new HashMap<>();
+
+        Map<String, String[]> nissan = new HashMap<>();
+        nissan.put("sedan", new String[]{"Kicks", "8400.0"});
+        nissan.put("suv", new String[]{"Magnite", "10800.0"});
+        nissan.put("muv", new String[]{"Terrano", "14400.0"});
+
+        Map<String, String[]> ford = new HashMap<>();
+        ford.put("sedan", new String[]{"Figo", "4802.0"});
+        ford.put("suv", new String[]{"Eco Sport", "9605.0"});
+        ford.put("muv", new String[]{"Endeavour", "21600.0"});
+
+        carData.put("nissan", nissan);
+        carData.put("ford", ford);
+
+        String[] carDetails = carData.get(carNameLower).get(carTypeLower);
+        return carDetails[0] + " and $" + carDetails[1];
+    }
+}
+
+class UserInterface {
+    public static CarInfo extractDetails(String carDetails) {
+        String[] parts = carDetails.split(":");
+        if (parts.length != 4) {
+            return null;
+        }
+
+        for (int i = 0; i < parts.length; i++) {
+            parts[i] = parts[i].trim();
+        }
+
+        return new CarInfo(parts[0], parts[1], parts[2], parts[3]);
+    }
+}
+
+
+
